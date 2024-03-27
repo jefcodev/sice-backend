@@ -19,7 +19,7 @@ app.use((err, req, res, next) => {
 });
 
 // Core
-app.use('/api/v1/login/', require('./routes/auth'));
+app.use('/api/v1/login', require('./routes/auth'));
 
 // Users
 app.use('/api/v1/usuarios', require('./routes/seguridad/usuarios'));
