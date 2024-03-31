@@ -1,7 +1,7 @@
 const { response } = require("express");
 const bcrypt = require("bcryptjs");
 
-const db_mysql = require('../database/config').db_mysql;
+const pool = require('../database/config').pool;
 const { generarJWT } = require("../helpers/jwt");
 
 
@@ -9,7 +9,7 @@ const login = async (req, res = response) => {
 
   const { email, password } = req.body;
   try {
-    const [rows] = await db_mysql.promise().query("SELECT * FROM users_2 WHERE email = ?", [email]);
+    const [rows] = await pool.promise().query("SELECT * FROM users_2 WHERE email = ?", [email]);
 
     // Verificar si el usuario existe
     if (!rows || rows.length === 0) {
@@ -55,7 +55,7 @@ const renewToken = async (req, res = response) => {
 
   // Generar el TOKEN - JWT
   const token = await generarJWT(uid);
-  const [rows] = await db_mysql.promise().query("SELECT * FROM users_2 WHERE id = ?", [uid]);
+  const [rows] = await pool.promise().query("SELECT * FROM users_2 WHERE id = ?", [uid]);
 
 
   const usuarioDB = rows[0];

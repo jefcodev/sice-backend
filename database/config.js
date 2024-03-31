@@ -8,16 +8,17 @@ const config = {
     port: 3306
 };
 
-const db_mysql = mysql.createConnection(config);
+const pool = mysql.createPool(config);
 
-db_mysql.connect((err) => {
+// Comprueba la conexión
+pool.getConnection((err, connection) => {
     if (err) {
         console.error('Error al conectar con la base de datos:', err);
         return;
     }
-    console.log('BDD Conected!');
+    console.log('BDD Connected!');
+    // Se debe liberar la conexión una vez que no se necesite más
+    connection.release();
 });
 
-exports.db_mysql = db_mysql;
-
-
+exports.pool = pool;

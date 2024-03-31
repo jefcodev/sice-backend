@@ -1,11 +1,11 @@
-const db_mysql = require('../../database/config').db_mysql;
+const pool = require('../../database/config').pool;
 
 const getUsuarios = async (req, res) => {
   try {
       const query = 'SELECT * FROM users';
 
       const usuarios = await new Promise((resolve, reject) => {
-          db_mysql.query(query, (err, results) => {
+          pool.query(query, (err, results) => {
               if (err) {
                   reject(err);
               } else {
