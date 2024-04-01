@@ -4,11 +4,12 @@ const getPreguntas = async (req, res) => {
   try {
     const desde = Number(req.query.desde) || 0;
     const limit = 10;
-    const sector = req.query.sector;
-    const local = req.query.local;
-    const mobil = req.query.mobil;
+    const sector = req.query.sector ||  null;
+    const local = req.query.local ||  null;
+    const mobil = req.query.mobil ||  null;
 
-    let query = `SELECT Id, Fecha_Creado, Nombre_Establecimiento, Region, Provincia, Ciudad, Sector, Direccion, Numero, Transversal, Geolocalizacion, tipo_local, numero_cambios_al_mes, rotulo_mobil, URL_Foto FROM terpel_questions`;
+    
+    let query = `SELECT Id, Fecha_Creado, Nombre_Establecimiento, Region, Provincia, Ciudad, Sector, Direccion, Numero, Transversal, Geolocalizacion, tipo_de_vehiculo_atiende, tipo_local, numero_cambios_al_mes, rotulo_mobil, URL_Foto FROM terpel_questions`;
     const queryParams = [];
     let queryCount = `SELECT COUNT(*) as total FROM terpel_questions`;
 
@@ -43,7 +44,6 @@ const getPreguntas = async (req, res) => {
       });
     });
 
-    // Consulta para obtener el conteo total de registros con el filtro por sector si se proporciona
     let totalCountResultFiltered = null;
     if (sector || local || mobil) {
       totalCountResultFiltered = await new Promise((resolve, reject) => {
@@ -57,9 +57,18 @@ const getPreguntas = async (req, res) => {
       });
     }
 
-    const [preguntasResult] = await Promise.all([
+    const [preguntasResult, preguntasTotal] = await Promise.all([
       new Promise((resolve, reject) => {
         pool.query(query, [...queryParams, desde, limit], (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        });
+      }),
+      new Promise((resolve, reject) => {
+        pool.query(query, [...queryParams, 0, totalCountResultAll], (err, results) => {
           if (err) {
             reject(err);
           } else {
@@ -71,9 +80,24 @@ const getPreguntas = async (req, res) => {
 
     const preguntas = preguntasResult;
 
+
+    // Filtrar y contar preguntas por tipo_local
+    const lubricadoraCount = preguntasTotal.filter(pregunta => pregunta.tipo_local === 'Lubricadora').length;
+    const almacenCount = preguntasTotal.filter(pregunta => pregunta.tipo_local === 'Almacén').length;
+    const tallerCount = preguntasTotal.filter(pregunta => pregunta.tipo_local === 'Taller / Mecánica').length;
+
+  
+
+    if((sector || local || mobil) == null){
+      totalCountResultFiltered = totalCountResultAll;
+    }
+
     res.status(200).json({
       ok: true,
       preguntas,
+      almacenCount,
+      lubricadoraCount,
+      tallerCount,
       totalTodos: totalCountResultAll,
       totalFiltrado: totalCountResultFiltered
     });
