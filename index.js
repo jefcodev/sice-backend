@@ -28,8 +28,9 @@ app.use('/api/v1/usuarios', require('./routes/seguridad/usuarios'));
 app.use('/api/v1/encuestas', require('./routes/encuesta/terpel'));
 
 
+const PORT = process.env.PORT || 4000;
+const IP = process.env.IP || '127.0.0.1';
 
-
-app.listen(process.env.PORT, process.env.IP, () => {
+app.listen(PORT, IP, () => {
     console.log('Servidor ' + process.env.PORT)
 })
