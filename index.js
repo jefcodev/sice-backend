@@ -30,6 +30,6 @@ app.use('/api/v1/encuestas', require('./routes/encuesta/terpel'));
 
 
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, process.env.IP, () => {
     console.log('Servidor ' + process.env.PORT)
 })
