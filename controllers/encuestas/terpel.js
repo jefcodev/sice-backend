@@ -9,7 +9,8 @@ const getPreguntas = async (req, res) => {
     const mobil = req.query.mobil ||  null;
 
     
-    let query = `SELECT Id, Fecha_Creado, Nombre_Establecimiento, Region, Provincia, Ciudad, Sector, Direccion, Numero, Transversal, Geolocalizacion, tipo_de_vehiculo_atiende, tipo_local, numero_cambios_al_mes, rotulo_mobil, URL_Foto FROM terpel_questions`;
+    /* let query = `SELECT Id, Fecha_Creado, Nombre_Establecimiento, Region, Provincia, Ciudad, Sector, Direccion, Numero, Transversal, Geolocalizacion, tipo_de_vehiculo_atiende, tipo_local, numero_cambios_al_mes, rotulo_mobil, URL_Foto FROM terpel_questions`; */
+    let query = `SELECT * FROM terpel_questions`;
     const queryParams = [];
     let queryCount = `SELECT COUNT(*) as total FROM terpel_questions`;
 
@@ -79,6 +80,7 @@ const getPreguntas = async (req, res) => {
     ]);
 
     const preguntas = preguntasResult;
+    const preguntasAll = preguntasTotal;
 
 
     // Filtrar y contar preguntas por tipo_local
@@ -95,6 +97,7 @@ const getPreguntas = async (req, res) => {
     res.status(200).json({
       ok: true,
       preguntas,
+      preguntasAll,
       almacenCount,
       lubricadoraCount,
       tallerCount,
